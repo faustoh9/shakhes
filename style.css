@@ -1,52 +1,107 @@
+/* style.css - Modern Design with Estedad Font */
+
 :root {
-    --primary-color: #0d6efd;
-    --bg-color: #f8f9fa;
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --primary-color: #4f46e5;       /* Modern Indigo */
+    --primary-hover: #4338ca;
+    --bg-gradient-start: #312e81;   /* Deep indigo */
+    --bg-gradient-end: #1e1b4b;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
 }
 
 body {
-    font-family: 'Vazirmatn', sans-serif;
-    background-color: var(--bg-color);
+    font-family: 'Estedad', sans-serif;
+    color: var(--text-main);
     -webkit-font-smoothing: antialiased;
-    color: #333;
+    min-height: 100vh;
 }
 
-.card {
-    border-radius: 16px;
-    box-shadow: var(--card-shadow) !important;
-    transition: box-shadow 0.3s ease-in-out;
+.bg-gradient-modern {
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 }
 
-.card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+.fw-black {
+    font-weight: 900;
 }
 
-.form-control, .form-select {
-    border-radius: 10px;
-    border: 1px solid #dee2e6;
-    padding: 0.75rem 1rem;
+/* Modern Card Styling */
+.custom-card {
+    background-color: var(--card-bg);
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* Inputs & Selects */
+.custom-input {
+    border-radius: 14px;
+    border: 2px solid #e5e7eb;
+    padding: 0.85rem 1.2rem;
+    font-size: 1.05rem;
+    background-color: #f9fafb;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+/* Buttons */
+.custom-btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 14px;
+    padding: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.custom-btn-primary:active {
+    transform: translateY(0);
+}
+
+.custom-btn-secondary {
+    border-radius: 14px;
+    border: 2px solid #e5e7eb;
+    color: #4b5563;
+    font-weight: 600;
+}
+
+.custom-btn-secondary:hover {
+    background-color: #f3f4f6;
+}
+
+.custom-btn-outline {
+    border-radius: 14px;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
     transition: all 0.2s ease;
 }
 
-.form-control:focus, .form-select:focus {
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-    border-color: var(--primary-color);
+.custom-btn-outline:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
-
-.btn {
-    border-radius: 10px;
-    padding: 0.75rem 1.5rem;
-    transition: transform 0.1s ease;
-}
-
-.btn:active {
-    transform: scale(0.98);
-}
-
-.result-box .text-muted { font-size: 0.95rem; }
 
 .btn-copied {
-    background-color: #198754 !important;
+    background-color: #10b981 !important; /* Emerald green */
+    border-color: #10b981 !important;
     color: white !important;
-    border-color: #198754 !important;
+}
+
+.custom-alert {
+    border-radius: 16px;
+    border: none;
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-weight: 600;
 }
