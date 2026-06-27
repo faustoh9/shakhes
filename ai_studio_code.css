@@ -1,0 +1,52 @@
+:root {
+    --primary-color: #0d6efd;
+    --bg-color: #f8f9fa;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+    color: #333;
+}
+
+.card {
+    border-radius: 16px;
+    box-shadow: var(--card-shadow) !important;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: var(--primary-color);
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    transition: transform 0.1s ease;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.result-box .text-muted { font-size: 0.95rem; }
+
+.btn-copied {
+    background-color: #198754 !important;
+    color: white !important;
+    border-color: #198754 !important;
+}
