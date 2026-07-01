@@ -1,6 +1,6 @@
 /**
  * app.js - Modernized Logic
- * Auto-Date calculation for Jalali calendar, simplified results, exact year parsing.
+ * Auto-Date calculation for Jalali calendar, exact year parsing, and Lawyer Fee Tariff 1405.
  */
 
 const PERSIAN_MONTHS = [
@@ -43,18 +43,71 @@ class NumberUtils {
         return new Intl.NumberFormat('fa-IR').format(num);
     }
 
-    // Formats year numbers to Persian string WITHOUT thousands separators (e.g., 1405 instead of 1,405)
+    // Formats year numbers to Persian string WITHOUT thousands separators
     static formatYear(year) {
         if (!year) return '';
         return new Intl.NumberFormat('fa-IR', { useGrouping: false }).format(year);
     }
 }
 
+class PersianWordUtils {
+    static numToWords(num) {
+        if (num === 0) return 'صفر';
+        if (isNaN(num) || num === null) return '';
+        
+        const units = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+        const teens = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+        const tens = ['', 'ده', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+        const hundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+        const thousands = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون'];
+
+        function getThreeDigits(n) {
+            let res = [];
+            let h = Math.floor(n / 100);
+            let t = Math.floor((n % 100) / 10);
+            let u = n % 10;
+
+            if (h > 0) res.push(hundreds[h]);
+            if (t === 1) {
+                res.push(teens[u]);
+            } else {
+                if (t > 1) res.push(tens[t]);
+                if (u > 0) res.push(units[u]);
+            }
+            return res.join(' و ');
+        }
+
+        let numStr = Math.floor(num).toString();
+        let groups = [];
+        while (numStr.length > 0) {
+            groups.push(numStr.slice(-3));
+            numStr = numStr.slice(0, -3);
+        }
+
+        let words = [];
+        for (let i = 0; i < groups.length; i++) {
+            let val = parseInt(groups[i], 10);
+            if (val > 0) {
+                let groupWord = getThreeDigits(val);
+                if (thousands[i]) {
+                    groupWord += ' ' + thousands[i];
+                }
+                words.unshift(groupWord);
+            }
+        }
+        return words.join(' و ');
+    }
+
+    static convertRialsToTomanWords(rials) {
+        if (isNaN(rials) || rials <= 0) return '';
+        const tomans = Math.floor(rials / 10);
+        return 'معادل: ' + this.numToWords(tomans) + ' تومان';
+    }
+}
+
 class DateUtils {
-    // Calculates the current Jalali Year and Month natively in the browser
     static getCurrentJalaliDate() {
         const date = new Date();
-        // Requesting english digits to easily parse it, but based on Persian Calendar
         const dtf = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric' });
         const parts = dtf.formatToParts(date);
         
@@ -88,7 +141,6 @@ class DataService {
 
     extractAvailableYears() {
         const yearsSet = new Set(this.indices.map(item => item['سال']));
-        // Sort descending (newest first)
         this.availableYears = Array.from(yearsSet).sort((a, b) => b - a);
     }
 
@@ -119,6 +171,70 @@ class Calculator {
     }
 }
 
+class LawyerCalculator {
+    static calculate(principal, membershipType) {
+        // Tiers according to Article 9 (Rials)
+        const tier1 = Math.min(principal, 500000000) * 0.08;
+        const tier2 = Math.max(0, Math.min(principal, 2000000000) - 500000000) * 0.07;
+        const tier3 = Math.max(0, Math.min(principal, 10000000000) - 2000000000) * 0.05;
+        const tier4 = Math.max(0, Math.min(principal, 30000000000) - 10000000000) * 0.04;
+        const tier5 = Math.max(0, principal - 30000000000) * 0.03;
+
+        const totalFee = tier1 + tier2 + tier3 + tier4 + tier5;
+        const effectiveRate = (totalFee / principal) * 100;
+
+        // Article 21 Split
+        const badvi = totalFee * 0.60;
+        const tajdid = totalFee * 0.40;
+
+        // Article 25 (Execution) - 2% of Executed Amount, minimum 4,000,000 Rials
+        const ejra = Math.max(4000000, principal * 0.02);
+
+        const sumBeforeDeduction = totalFee + ejra;
+
+        // Article 29 Deductions
+        const calculateDeductionsForPhase = (amount) => {
+            const tax = amount * 0.05;
+            let fund = 0;
+            let associationShare = 0;
+
+            if (membershipType === 'kanon') {
+                fund = tax * 0.50;               // 50% of tax
+                associationShare = tax * 0.25;   // 25% of tax
+            } else {
+                fund = amount * 0.05;            // Center gets 5% of lawyer's fee (identical to tax)
+                associationShare = 0;
+            }
+
+            const totalDeductions = tax + fund + associationShare;
+            const netIncome = amount - totalDeductions;
+
+            return { tax, fund, associationShare, totalDeductions, netIncome };
+        };
+
+        const badviDeductions = calculateDeductionsForPhase(badvi);
+        const tajdidDeductions = calculateDeductionsForPhase(tajdid);
+        const ejraDeductions = calculateDeductionsForPhase(ejra);
+
+        const totalDeductionsAll = badviDeductions.totalDeductions + tajdidDeductions.totalDeductions + ejraDeductions.totalDeductions;
+        const netIncomeAll = sumBeforeDeduction - totalDeductionsAll;
+
+        return {
+            totalFee,
+            effectiveRate,
+            badvi,
+            tajdid,
+            ejra,
+            sumBeforeDeduction,
+            totalDeductionsAll,
+            netIncomeAll,
+            badviDeductions,
+            tajdidDeductions,
+            ejraDeductions
+        };
+    }
+}
+
 class UIController {
     constructor() {
         this.dataService = new DataService();
@@ -127,30 +243,81 @@ class UIController {
     }
 
     cacheDOM() {
+        // Tab 1 Elements
         this.form = document.getElementById('calc-form');
         this.principalInput = document.getElementById('principal');
+        this.principalWords = document.getElementById('principal-words');
         this.startYearSelect = document.getElementById('start-year');
         this.startMonthSelect = document.getElementById('start-month');
         this.endYearSelect = document.getElementById('end-year');
         this.endMonthSelect = document.getElementById('end-month');
         this.btnClear = document.getElementById('btn-clear');
         this.btnCopy = document.getElementById('btn-copy');
-        
         this.errorContainer = document.getElementById('error-container');
         this.resultCard = document.getElementById('result-card');
         this.calculatorCard = document.getElementById('calculator-card');
         this.loadingSpinner = document.getElementById('loading-spinner');
-
         this.resPrincipalAmount = document.getElementById('res-principal-amount');
         this.resDelayAmount = document.getElementById('res-delay-amount');
         this.resFinalAmount = document.getElementById('res-final-amount');
+
+        // Tab 2 Elements
+        this.lawyerForm = document.getElementById('lawyer-form');
+        this.lawyerPrincipalInput = document.getElementById('lawyer-principal');
+        this.lawyerPrincipalWords = document.getElementById('lawyer-principal-words');
+        this.membershipTypeSelect = document.getElementById('membership-type');
+        this.btnLawyerClear = document.getElementById('btn-lawyer-clear');
+        this.btnCopyLawyer = document.getElementById('btn-copy-lawyer');
+        this.lawyerResultCard = document.getElementById('lawyer-result-card');
+
+        // Tab 2 Output DOM Elements
+        this.lawyerResPrincipal = document.getElementById('lawyer-res-principal');
+        this.lawyerResRate = document.getElementById('lawyer-res-rate');
+        this.lawyerResTotalFee = document.getElementById('lawyer-res-total-fee');
+        this.lawyerResBadvi = document.getElementById('lawyer-res-badvi');
+        this.lawyerResTajdid = document.getElementById('lawyer-res-tajdid');
+        this.lawyerResEjra = document.getElementById('lawyer-res-ejra');
+
+        // Phase-by-phase Deductions Outputs
+        this.lawyerResBadviTax = document.getElementById('lawyer-res-badvi-tax');
+        this.lawyerResBadviFundLabel = document.getElementById('lawyer-res-badvi-fund-label');
+        this.lawyerResBadviFund = document.getElementById('lawyer-res-badvi-fund');
+        this.lawyerResBadviAssocRow = document.getElementById('lawyer-res-badvi-assoc-row');
+        this.lawyerResBadviAssoc = document.getElementById('lawyer-res-badvi-assoc');
+        this.lawyerResBadviNet = document.getElementById('lawyer-res-badvi-net');
+
+        this.lawyerResTajdidTax = document.getElementById('lawyer-res-tajdid-tax');
+        this.lawyerResTajdidFundLabel = document.getElementById('lawyer-res-tajdid-fund-label');
+        this.lawyerResTajdidFund = document.getElementById('lawyer-res-tajdid-fund');
+        this.lawyerResTajdidAssocRow = document.getElementById('lawyer-res-tajdid-assoc-row');
+        this.lawyerResTajdidAssoc = document.getElementById('lawyer-res-tajdid-assoc');
+        this.lawyerResTajdidNet = document.getElementById('lawyer-res-tajdid-net');
+
+        this.lawyerResEjraTax = document.getElementById('lawyer-res-ejra-tax');
+        this.lawyerResEjraFundLabel = document.getElementById('lawyer-res-ejra-fund-label');
+        this.lawyerResEjraFund = document.getElementById('lawyer-res-ejra-fund');
+        this.lawyerResEjraAssocRow = document.getElementById('lawyer-res-ejra-assoc-row');
+        this.lawyerResEjraAssoc = document.getElementById('lawyer-res-ejra-assoc');
+        this.lawyerResEjraNet = document.getElementById('lawyer-res-ejra-net');
+
+        // Consolidated Summary Outputs
+        this.lawyerResSumBefore = document.getElementById('lawyer-res-sum-before');
+        this.lawyerResTotalDeductions = document.getElementById('lawyer-res-total-deductions');
+        this.lawyerResFinalNet = document.getElementById('lawyer-res-final-net');
     }
 
     bindEvents() {
+        // Tab 1 Listeners
         this.form.addEventListener('submit', (e) => this.handleCalculate(e));
         this.btnClear.addEventListener('click', () => this.clearForm());
         this.btnCopy.addEventListener('click', () => this.copyResults());
         this.principalInput.addEventListener('input', (e) => this.formatPrincipalInput(e));
+
+        // Tab 2 Listeners
+        this.lawyerForm.addEventListener('submit', (e) => this.handleCalculateLawyer(e));
+        this.btnLawyerClear.addEventListener('click', () => this.clearLawyerForm());
+        this.btnCopyLawyer.addEventListener('click', () => this.copyLawyerResults());
+        this.lawyerPrincipalInput.addEventListener('input', (e) => this.formatLawyerPrincipalInput(e));
     }
 
     async init() {
@@ -164,17 +331,12 @@ class UIController {
 
         this.calculatorCard.classList.remove('d-none');
         this.populateDropdowns();
-        
-        // Setup initial default End Date to Today (Jalali)
         this.setAutomaticEndDate();
-
-        // Restore if user has saved data (overrides auto-date if they had a previous search)
         this.restoreState();
     }
 
     populateDropdowns() {
         const yearOptions = this.dataService.availableYears.map(year => 
-            // Notice: Using NumberUtils.formatYear instead of formatCurrency to prevent comma separation
             `<option value="${year}">${NumberUtils.formatYear(year)}</option>`
         ).join('');
         
@@ -192,8 +354,6 @@ class UIController {
     setAutomaticEndDate() {
         try {
             const today = DateUtils.getCurrentJalaliDate();
-            
-            // Check if current year exists in our JSON
             if (this.dataService.availableYears.includes(today.year)) {
                 this.endYearSelect.value = today.year;
                 this.endMonthSelect.value = today.month;
@@ -208,8 +368,22 @@ class UIController {
         const number = NumberUtils.parseFloatStrict(rawValue);
         if (isNaN(number)) {
             e.target.value = '';
+            this.principalWords.textContent = '';
         } else {
             e.target.value = NumberUtils.formatCurrency(number);
+            this.principalWords.textContent = PersianWordUtils.convertRialsToTomanWords(number);
+        }
+    }
+
+    formatLawyerPrincipalInput(e) {
+        const rawValue = e.target.value;
+        const number = NumberUtils.parseFloatStrict(rawValue);
+        if (isNaN(number)) {
+            e.target.value = '';
+            this.lawyerPrincipalWords.textContent = '';
+        } else {
+            e.target.value = NumberUtils.formatCurrency(number);
+            this.lawyerPrincipalWords.textContent = PersianWordUtils.convertRialsToTomanWords(number);
         }
     }
 
@@ -263,7 +437,6 @@ class UIController {
     }
 
     displayResults(principal, results) {
-        // Only show 3 elements as requested
         this.resPrincipalAmount.textContent = NumberUtils.formatCurrency(principal) + ' ریال';
         this.resDelayAmount.textContent = NumberUtils.formatCurrency(results.delayAmount) + ' ریال';
         this.resFinalAmount.textContent = NumberUtils.formatCurrency(results.finalAmount) + ' ریال';
@@ -272,20 +445,109 @@ class UIController {
         this.resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    handleCalculateLawyer(e) {
+        e.preventDefault();
+        const principal = NumberUtils.parseFloatStrict(this.lawyerPrincipalInput.value);
+        const membershipType = this.membershipTypeSelect.value;
+
+        if (!principal || principal <= 0) {
+            alert("لطفاً مبلغ معتبری برای بهای خواسته وارد کنید.");
+            return;
+        }
+
+        const results = LawyerCalculator.calculate(principal, membershipType);
+        this.displayLawyerResults(principal, results, membershipType);
+    }
+
+    displayLawyerResults(principal, results, membershipType) {
+        this.lawyerResPrincipal.textContent = NumberUtils.formatCurrency(principal) + ' ریال';
+        this.lawyerResRate.textContent = results.effectiveRate.toFixed(2) + '%';
+        
+        // Article 9 Outputs
+        this.lawyerResTotalFee.textContent = NumberUtils.formatCurrency(results.totalFee) + ' ریال';
+        this.lawyerResBadvi.textContent = NumberUtils.formatCurrency(results.badvi) + ' ریال';
+        this.lawyerResTajdid.textContent = NumberUtils.formatCurrency(results.tajdid) + ' ریال';
+
+        // Article 25 Output
+        this.lawyerResEjra.textContent = NumberUtils.formatCurrency(results.ejra) + ' ریال';
+
+        // Set Labels and Values dynamically based on Kanon vs Markaz
+        const setDeductionLabels = (isKanon) => {
+            const labelStr = isKanon ? "سهم صندوق حمایت (۵۰٪ مالیات):" : "سهم مرکز (۵٪ حق‌الوکاله):";
+            this.lawyerResBadviFundLabel.textContent = labelStr;
+            this.lawyerResTajdidFundLabel.textContent = labelStr;
+            this.lawyerResEjraFundLabel.textContent = labelStr;
+
+            if (isKanon) {
+                this.lawyerResBadviAssocRow.classList.remove('d-none');
+                this.lawyerResTajdidAssocRow.classList.remove('d-none');
+                this.lawyerResEjraAssocRow.classList.remove('d-none');
+            } else {
+                this.lawyerResBadviAssocRow.classList.add('d-none');
+                this.lawyerResTajdidAssocRow.classList.add('d-none');
+                this.lawyerResEjraAssocRow.classList.add('d-none');
+            }
+        };
+
+        const isKanon = (membershipType === 'kanon');
+        setDeductionLabels(isKanon);
+
+        // Populate deductions
+        this.lawyerResBadviTax.textContent = NumberUtils.formatCurrency(results.badviDeductions.tax) + ' ریال';
+        this.lawyerResBadviFund.textContent = NumberUtils.formatCurrency(results.badviDeductions.fund) + ' ریال';
+        this.lawyerResBadviNet.textContent = NumberUtils.formatCurrency(results.badviDeductions.netIncome) + ' ریال';
+
+        this.lawyerResTajdidTax.textContent = NumberUtils.formatCurrency(results.tajdidDeductions.tax) + ' ریال';
+        this.lawyerResTajdidFund.textContent = NumberUtils.formatCurrency(results.tajdidDeductions.fund) + ' ریال';
+        this.lawyerResTajdidNet.textContent = NumberUtils.formatCurrency(results.tajdidDeductions.netIncome) + ' ریال';
+
+        this.lawyerResEjraTax.textContent = NumberUtils.formatCurrency(results.ejraDeductions.tax) + ' ریال';
+        this.lawyerResEjraFund.textContent = NumberUtils.formatCurrency(results.ejraDeductions.fund) + ' ریال';
+        this.lawyerResEjraNet.textContent = NumberUtils.formatCurrency(results.ejraDeductions.netIncome) + ' ریال';
+
+        if (isKanon) {
+            this.lawyerResBadviAssoc.textContent = NumberUtils.formatCurrency(results.badviDeductions.associationShare) + ' ریال';
+            this.lawyerResTajdidAssoc.textContent = NumberUtils.formatCurrency(results.tajdidDeductions.associationShare) + ' ریال';
+            this.lawyerResEjraAssoc.textContent = NumberUtils.formatCurrency(results.ejraDeductions.associationShare) + ' ریال';
+        }
+
+        // Summary Consolidated Cards
+        this.lawyerResSumBefore.textContent = NumberUtils.formatCurrency(results.sumBeforeDeduction) + ' ریال';
+        this.lawyerResTotalDeductions.textContent = NumberUtils.formatCurrency(results.totalDeductionsAll) + ' ریال';
+        this.lawyerResFinalNet.textContent = NumberUtils.formatCurrency(results.netIncomeAll) + ' ریال';
+
+        this.lawyerResultCard.classList.remove('d-none');
+        this.lawyerResultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     clearForm() {
         this.form.reset();
         this.hideError();
+        this.principalWords.textContent = '';
         this.resultCard.classList.add('d-none');
         localStorage.removeItem(STORAGE_KEY);
-        this.setAutomaticEndDate(); // Reset to today instead of blank
+        this.setAutomaticEndDate();
         this.principalInput.focus();
+    }
+
+    clearLawyerForm() {
+        this.lawyerForm.reset();
+        this.lawyerPrincipalWords.textContent = '';
+        this.lawyerResultCard.classList.add('d-none');
+        this.lawyerPrincipalInput.focus();
     }
 
     restoreState() {
         const data = localStorage.getItem(STORAGE_KEY);
         if (data) {
             const state = JSON.parse(data);
-            if (state.principal) this.principalInput.value = state.principal;
+            if (state.principal) {
+                this.principalInput.value = state.principal;
+                const number = NumberUtils.parseFloatStrict(state.principal);
+                if (!isNaN(number)) {
+                    this.principalWords.textContent = PersianWordUtils.convertRialsToTomanWords(number);
+                }
+            }
             if (state.startYear) this.startYearSelect.value = state.startYear;
             if (state.startMonth) this.startMonthSelect.value = state.startMonth;
             if (state.endYear) this.endYearSelect.value = state.endYear;
@@ -302,18 +564,44 @@ class UIController {
 خالص خسارت: ${this.resDelayAmount.textContent}
 مجموع نهایی: ${this.resFinalAmount.textContent}`;
 
+        await this.executeClipboardCopy(textToCopy, this.btnCopy);
+    }
+
+    async copyLawyerResults() {
+        const membershipStr = this.membershipTypeSelect.options[this.membershipTypeSelect.selectedIndex].text;
+        const textToCopy = `محاسبه تعرفه حق‌الوکاله وکلا (مصوب ۱۴۰۵):
+بهای خواسته: ${this.lawyerResPrincipal.textContent}
+پروانه وکیل: ${membershipStr}
+نرخ مؤثر تعرفه: ${this.lawyerResRate.textContent}
+
+۱. حق‌الوکاله دعاوی مالی (ماده ۹):
+حق‌الوکاله کل: ${this.lawyerResTotalFee.textContent}
+مرحله بدوی (۶۰٪): ${this.lawyerResBadvi.textContent}
+مرحله تجدیدنظر (۴۰٪): ${this.lawyerResTajdid.textContent}
+
+۲. حق‌الوکاله امور اجرایی (ماده ۲۵):
+مجموع امور اجرایی: ${this.lawyerResEjra.textContent}
+
+۳. مبالغ تجمیعی نهایی:
+کل حق‌الوکاله قبل از کسورات: ${this.lawyerResSumBefore.textContent}
+کل کسورات قانونی (مالیات و سهم صندوق): ${this.lawyerResTotalDeductions.textContent}
+درآمد خالص نهایی وکیل: ${this.lawyerResFinalNet.textContent}`;
+
+        await this.executeClipboardCopy(textToCopy, this.btnCopyLawyer);
+    }
+
+    async executeClipboardCopy(text, btnElement) {
         try {
-            await navigator.clipboard.writeText(textToCopy);
-            
-            const originalHTML = this.btnCopy.innerHTML;
-            this.btnCopy.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg> کپی شد!';
-            this.btnCopy.classList.add('btn-copied', 'text-white');
-            this.btnCopy.classList.remove('btn-outline-primary', 'custom-btn-outline');
+            await navigator.clipboard.writeText(text);
+            const originalHTML = btnElement.innerHTML;
+            btnElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg> کپی شد!';
+            btnElement.classList.add('btn-copied', 'text-white');
+            btnElement.classList.remove('btn-outline-primary', 'custom-btn-outline');
             
             setTimeout(() => {
-                this.btnCopy.innerHTML = originalHTML;
-                this.btnCopy.classList.remove('btn-copied', 'text-white');
-                this.btnCopy.classList.add('btn-outline-primary', 'custom-btn-outline');
+                btnElement.innerHTML = originalHTML;
+                btnElement.classList.remove('btn-copied', 'text-white');
+                btnElement.classList.add('btn-outline-primary', 'custom-btn-outline');
             }, 2500);
         } catch (err) {
             alert('متأسفانه کپی در مرورگر شما پشتیبانی نمی‌شود.');
