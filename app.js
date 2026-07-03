@@ -1,6 +1,6 @@
 /**
  * app.js - Modernized Logic
- * Auto-Date calculation for Jalali calendar, exact year parsing, and Lawyer Fee Tariff 1405.
+ * Auto-Date calculation for Jalali calendar, exact year parsing, Lawyer Fee Tariff 1405, and HTML2Canvas Export.
  */
 
 const PERSIAN_MONTHS = [
@@ -253,6 +253,7 @@ class UIController {
         this.endMonthSelect = document.getElementById('end-month');
         this.btnClear = document.getElementById('btn-clear');
         this.btnCopy = document.getElementById('btn-copy');
+        this.btnCaptureDelay = document.getElementById('btn-capture-delay');
         this.errorContainer = document.getElementById('error-container');
         this.resultCard = document.getElementById('result-card');
         this.calculatorCard = document.getElementById('calculator-card');
@@ -268,6 +269,7 @@ class UIController {
         this.membershipTypeSelect = document.getElementById('membership-type');
         this.btnLawyerClear = document.getElementById('btn-lawyer-clear');
         this.btnCopyLawyer = document.getElementById('btn-copy-lawyer');
+        this.btnCaptureLawyer = document.getElementById('btn-capture-lawyer');
         this.lawyerResultCard = document.getElementById('lawyer-result-card');
 
         // Tab 2 Output DOM Elements
@@ -275,6 +277,7 @@ class UIController {
         this.lawyerResRate = document.getElementById('lawyer-res-rate');
         this.lawyerResTotalFee = document.getElementById('lawyer-res-total-fee');
         this.lawyerResBadvi = document.getElementById('lawyer-res-badvi');
+        this.lawyerResPageStart = document.getElementById('pills-lawyer');
         this.lawyerResTajdid = document.getElementById('lawyer-res-tajdid');
         this.lawyerResEjra = document.getElementById('lawyer-res-ejra');
 
@@ -311,12 +314,14 @@ class UIController {
         this.form.addEventListener('submit', (e) => this.handleCalculate(e));
         this.btnClear.addEventListener('click', () => this.clearForm());
         this.btnCopy.addEventListener('click', () => this.copyResults());
+        this.btnCaptureDelay.addEventListener('click', () => this.captureElementAsImage('result-card', 'delay-invoice.png'));
         this.principalInput.addEventListener('input', (e) => this.formatPrincipalInput(e));
 
         // Tab 2 Listeners
         this.lawyerForm.addEventListener('submit', (e) => this.handleCalculateLawyer(e));
         this.btnLawyerClear.addEventListener('click', () => this.clearLawyerForm());
         this.btnCopyLawyer.addEventListener('click', () => this.copyLawyerResults());
+        this.btnCaptureLawyer.addEventListener('click', () => this.captureElementAsImage('lawyer-result-card', 'lawyer-fee-invoice.png'));
         this.lawyerPrincipalInput.addEventListener('input', (e) => this.formatLawyerPrincipalInput(e));
     }
 
@@ -605,6 +610,30 @@ class UIController {
             }, 2500);
         } catch (err) {
             alert('متأسفانه کپی در مرورگر شما پشتیبانی نمی‌شود.');
+        }
+    }
+
+    async captureElementAsImage(elementId, filename) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        try {
+            // Apply a temporary styling setup inside canvas builder
+            const canvas = await html2canvas(element, {
+                useCORS: true,
+                scale: 2, // Capture with premium high resolution DPI
+                backgroundColor: '#ffffff', // Ensures a clean flat white background card
+                logging: false
+            });
+            
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = image;
+            link.click();
+        } catch (error) {
+            console.error("Capture implementation failed:", error);
+            alert("خطا در ایجاد تصویر فاکتور. لطفاً مجدداً تلاش نمایید.");
         }
     }
 }
