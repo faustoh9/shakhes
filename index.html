@@ -22,7 +22,7 @@
 </head>
 <body class="bg-gradient-modern">
 
-    <main class="container py-5">
+    <main class="container py-4 py-sm-5">
         <header class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center text-white">
                 <h1 class="fw-bold mb-3">سامانه هوشمند محاسبات حقوقی</h1>
@@ -94,9 +94,9 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex gap-3">
+                                <div class="d-flex flex-column flex-sm-row gap-3">
                                     <button type="submit" class="btn btn-primary btn-lg custom-btn-primary flex-grow-1 fw-bold shadow">محاسبه خسارت</button>
-                                    <button type="button" id="btn-clear" class="btn btn-light btn-lg custom-btn-secondary px-4">پاک کردن</button>
+                                    <button type="button" id="btn-clear" class="btn btn-light btn-lg custom-btn-secondary px-4 py-3">پاک کردن</button>
                                 </div>
                             </form>
                         </div>
@@ -107,22 +107,22 @@
                                 <span class="badge bg-success bg-opacity-10 text-success fs-6 px-3 py-2 rounded-pill mb-2">محاسبه با موفقیت انجام شد</span>
                             </div>
                             
-                            <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-1 mb-4">
                                 <span class="text-secondary fw-bold">اصل دین:</span>
-                                <span class="fs-5 fw-bold text-dark" id="res-principal-amount">-</span>
+                                <span class="fs-5 fw-bold text-dark text-start text-sm-end" id="res-principal-amount">-</span>
                             </div>
                             
-                            <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-1 mb-4">
                                 <span class="text-secondary fw-bold">خالص خسارت:</span>
-                                <span class="fs-5 fw-bold text-danger" id="res-delay-amount">-</span>
+                                <span class="fs-5 fw-bold text-danger text-start text-sm-end" id="res-delay-amount">-</span>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center bg-primary bg-opacity-10 p-4 rounded-4 mb-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center bg-primary bg-opacity-10 p-4 rounded-4 mb-4 gap-2">
                                 <span class="text-primary fw-bold fs-5">مجموع (اصل + خسارت):</span>
-                                <span class="fs-3 fw-black text-primary" id="res-final-amount">-</span>
+                                <span class="fs-3 fw-black text-primary text-start text-sm-end" id="res-final-amount">-</span>
                             </div>
 
-                            <button type="button" id="btn-copy" class="btn btn-outline-primary btn-lg custom-btn-outline w-100 fw-bold">
+                            <button type="button" id="btn-copy" class="btn btn-outline-primary btn-lg custom-btn-outline w-100 fw-bold py-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-copy me-2" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
                                 </svg>
@@ -158,9 +158,9 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex gap-3">
+                                <div class="d-flex flex-column flex-sm-row gap-3">
                                     <button type="submit" class="btn btn-primary btn-lg custom-btn-primary flex-grow-1 fw-bold shadow">محاسبه حق‌الوکاله</button>
-                                    <button type="button" id="btn-lawyer-clear" class="btn btn-light btn-lg custom-btn-secondary px-4">پاک کردن</button>
+                                    <button type="button" id="btn-lawyer-clear" class="btn btn-light btn-lg custom-btn-secondary px-4 py-3">پاک کردن</button>
                                 </div>
                             </form>
                         </div>
@@ -172,14 +172,14 @@
                             </div>
 
                             <!-- Headline Summary -->
-                            <div class="row mb-4 border-bottom pb-3 text-center text-sm-start">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <span class="text-secondary fw-bold block mb-1">بهای خواسته:</span>
-                                    <div class="fs-5 fw-bold text-dark" id="lawyer-res-principal">-</div>
+                            <div class="row mb-4 border-bottom pb-3">
+                                <div class="col-6 text-start">
+                                    <span class="text-secondary fw-bold d-block mb-1">بهای خواسته:</span>
+                                    <div class="fs-6 fs-sm-5 fw-bold text-dark" id="lawyer-res-principal">-</div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <span class="text-secondary fw-bold block mb-1">نرخ مؤثر تعرفه:</span>
-                                    <div class="fs-5 fw-bold text-primary" id="lawyer-res-rate">-</div>
+                                <div class="col-6 text-end">
+                                    <span class="text-secondary fw-bold d-block mb-1">نرخ مؤثر تعرفه:</span>
+                                    <div class="fs-6 fs-sm-5 fw-bold text-primary" id="lawyer-res-rate">-</div>
                                 </div>
                             </div>
 
@@ -187,20 +187,20 @@
                             <div class="results-box mb-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="badge bg-primary bg-opacity-10 text-primary me-2 rounded p-2">ماده ۹</div>
-                                    <h5 class="fw-bold m-0 text-dark">حق‌الوکاله اصلی (دعاوی مالی)</h5>
+                                    <h5 class="fw-bold m-0 text-dark fs-6 fs-sm-5">حق‌الوکاله اصلی (دعاوی مالی)</h5>
                                 </div>
                                 <div class="p-3 bg-light rounded-4">
-                                    <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between mb-2 gap-1">
                                         <span class="text-secondary small">حق‌الوکاله کل:</span>
-                                        <span class="fw-bold text-dark" id="lawyer-res-total-fee">-</span>
+                                        <span class="fw-bold text-dark text-start text-sm-end" id="lawyer-res-total-fee">-</span>
                                     </div>
-                                    <div class="d-flex justify-content-between mb-2 border-top pt-2">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between mb-2 border-top pt-2 gap-1">
                                         <span class="text-secondary small">مرحله نخستین (بدوی - ۶۰٪):</span>
-                                        <span class="fw-bold text-dark" id="lawyer-res-badvi">-</span>
+                                        <span class="fw-bold text-dark text-start text-sm-end" id="lawyer-res-badvi">-</span>
                                     </div>
-                                    <div class="d-flex justify-content-between">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between gap-1">
                                         <span class="text-secondary small">مرحله تجدیدنظر (۴۰٪):</span>
-                                        <span class="fw-bold text-dark" id="lawyer-res-tajdid">-</span>
+                                        <span class="fw-bold text-dark text-start text-sm-end" id="lawyer-res-tajdid">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -209,20 +209,20 @@
                             <div class="results-box mb-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="badge bg-warning bg-opacity-10 text-warning me-2 rounded p-2">ماده ۲۵</div>
-                                    <h5 class="fw-bold m-0 text-dark">حق‌الوکاله امور اجرایی</h5>
+                                    <h5 class="fw-bold m-0 text-dark fs-6 fs-sm-5">حق‌الوکاله امور اجرایی</h5>
                                 </div>
                                 <div class="p-3 bg-light rounded-4">
-                                    <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between mb-2 gap-1">
                                         <span class="text-secondary small">حداقل قانونی:</span>
-                                        <span class="fw-bold text-dark">۴,۰۰۰,۰۰۰ ریال</span>
+                                        <span class="fw-bold text-dark text-start text-sm-end">۴,۰۰۰,۰۰۰ ریال</span>
                                     </div>
-                                    <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between mb-2 gap-1">
                                         <span class="text-secondary small">مبنای محاسبه:</span>
-                                        <span class="badge bg-dark bg-opacity-10 text-dark">دو درصد مبلغ محکوم‌به</span>
+                                        <span class="badge bg-dark bg-opacity-10 text-dark align-self-start">دو درصد مبلغ محکوم‌به</span>
                                     </div>
-                                    <div class="d-flex justify-content-between border-top pt-2">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between border-top pt-2 gap-1">
                                         <span class="text-secondary small fw-bold">حق‌الوکاله امور اجرایی:</span>
-                                        <span class="fw-bold text-dark" id="lawyer-res-ejra">-</span>
+                                        <span class="fw-bold text-dark text-start text-sm-end" id="lawyer-res-ejra">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -231,92 +231,92 @@
                             <div class="results-box mb-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="badge bg-danger bg-opacity-10 text-danger me-2 rounded p-2">ماده ۲۹</div>
-                                    <h5 class="fw-bold m-0 text-dark">جزییات قانونی کسورات و درآمد خالص</h5>
+                                    <h5 class="fw-bold m-0 text-dark fs-6 fs-sm-5">جزییات قانونی کسورات و درآمد خالص</h5>
                                 </div>
                                 <div class="p-3 bg-light rounded-4">
                                     
                                     <!-- Badvi Detail -->
                                     <div class="mb-3">
                                         <span class="fw-bold text-secondary small d-block mb-1 border-bottom pb-1">مرحله بدوی (نخستین)</span>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span>مالیات تمبر (۵٪):</span>
-                                            <span class="text-danger" id="lawyer-res-badvi-tax">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-badvi-tax">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span id="lawyer-res-badvi-fund-label">سهم صندوق حمایت (۵۰٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-badvi-fund">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-badvi-fund">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1" id="lawyer-res-badvi-assoc-row">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1" id="lawyer-res-badvi-assoc-row">
                                             <span>سهم کانون (۲۵٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-badvi-assoc">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-badvi-assoc">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small fw-bold text-success">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small fw-bold text-success gap-1">
                                             <span>درآمد خالص مرحله بدوی:</span>
-                                            <span id="lawyer-res-badvi-net">-</span>
+                                            <span class="text-start text-sm-end" id="lawyer-res-badvi-net">-</span>
                                         </div>
                                     </div>
 
                                     <!-- Tajdid Detail -->
                                     <div class="mb-3">
                                         <span class="fw-bold text-secondary small d-block mb-1 border-bottom pb-1">مرحله تجدیدنظر</span>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span>مالیات تمبر (۵٪):</span>
-                                            <span class="text-danger" id="lawyer-res-tajdid-tax">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-tajdid-tax">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span id="lawyer-res-tajdid-fund-label">سهم صندوق حمایت (۵۰٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-tajdid-fund">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-tajdid-fund">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1" id="lawyer-res-tajdid-assoc-row">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1" id="lawyer-res-tajdid-assoc-row">
                                             <span>سهم کانون (۲۵٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-tajdid-assoc">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-tajdid-assoc">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small fw-bold text-success">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small fw-bold text-success gap-1">
                                             <span>درآمد خالص مرحله تجدیدنظر:</span>
-                                            <span id="lawyer-res-tajdid-net">-</span>
+                                            <span class="text-start text-sm-end" id="lawyer-res-tajdid-net">-</span>
                                         </div>
                                     </div>
 
                                     <!-- Ejra Detail -->
                                     <div>
                                         <span class="fw-bold text-secondary small d-block mb-1 border-bottom pb-1">امور اجرایی (اجرای احکام)</span>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span>مالیات تمبر (۵٪):</span>
-                                            <span class="text-danger" id="lawyer-res-ejra-tax">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-ejra-tax">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1">
                                             <span id="lawyer-res-ejra-fund-label">سهم صندوق حمایت (۵۰٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-ejra-fund">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-ejra-fund">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small mb-1" id="lawyer-res-ejra-assoc-row">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small mb-1 gap-1" id="lawyer-res-ejra-assoc-row">
                                             <span>سهم کانون (۲۵٪ مالیات):</span>
-                                            <span class="text-danger" id="lawyer-res-ejra-assoc">-</span>
+                                            <span class="text-danger text-start text-sm-end" id="lawyer-res-ejra-assoc">-</span>
                                         </div>
-                                        <div class="d-flex justify-content-between small fw-bold text-success">
+                                        <div class="d-flex flex-column flex-sm-row justify-content-between small fw-bold text-success gap-1">
                                             <span>درآمد خالص امور اجرایی:</span>
-                                            <span id="lawyer-res-ejra-net">-</span>
+                                            <span class="text-start text-sm-end" id="lawyer-res-ejra-net">-</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Consolidated Overall Summary -->
-                            <div class="p-4 bg-primary bg-opacity-10 rounded-4 mb-4">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-primary fw-bold">کل حق‌الوکاله (بدوی + تجدیدنظر + اجرایی):</span>
-                                    <span class="fs-5 fw-bold text-primary" id="lawyer-res-sum-before">-</span>
+                            <div class="p-3 p-sm-4 bg-primary bg-opacity-10 rounded-4 mb-4">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-2 gap-1">
+                                    <span class="text-primary fw-bold">کل حق‌الوکاله قبل از کسورات:</span>
+                                    <span class="fs-5 fw-bold text-primary text-start text-sm-end" id="lawyer-res-sum-before">-</span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2 border-top border-primary border-opacity-20 pt-2">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-2 border-top border-primary border-opacity-20 pt-2 gap-1">
                                     <span class="text-danger fw-bold small">کل کسورات قانونی:</span>
-                                    <span class="fs-6 fw-bold text-danger" id="lawyer-res-total-deductions">-</span>
+                                    <span class="fs-6 fw-bold text-danger text-start text-sm-end" id="lawyer-res-total-deductions">-</span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center border-top border-primary border-opacity-25 pt-2">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center border-top border-primary border-opacity-25 pt-2 gap-1">
                                     <span class="text-success fw-bold fs-5">درآمد خالص نهایی وکیل:</span>
-                                    <span class="fs-3 fw-black text-success" id="lawyer-res-final-net">-</span>
+                                    <span class="fs-3 fw-black text-success text-start text-sm-end" id="lawyer-res-final-net">-</span>
                                 </div>
                             </div>
 
-                            <button type="button" id="btn-copy-lawyer" class="btn btn-outline-primary btn-lg custom-btn-outline w-100 fw-bold">
+                            <button type="button" id="btn-copy-lawyer" class="btn btn-outline-primary btn-lg custom-btn-outline w-100 fw-bold py-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-copy me-2" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
                                 </svg>
