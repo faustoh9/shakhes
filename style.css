@@ -124,3 +124,37 @@ body {
     color: #991b1b;
     font-weight: 600;
 }
+
+/* ==========================================================================
+   Mobile Responsive Adjustments (Media Queries)
+   ========================================================================== */
+@media (max-width: 576px) {
+    .nav-pills {
+        flex-direction: column;
+    }
+    .nav-pills .nav-link {
+        font-size: 0.95rem;
+        padding: 0.8rem 1rem !important;
+    }
+    .custom-card {
+        padding: 1.5rem !important;
+        border-radius: 20px;
+    }
+    .custom-input {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
+    /* Typography compression on mobile viewports */
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    p.opacity-75 {
+        font-size: 1rem !important;
+    }
+    .fs-3 {
+        font-size: 1.45rem !important;
+    }
+    .fs-5 {
+        font-size: 1.1rem !important;
+    }
+}
