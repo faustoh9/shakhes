@@ -133,11 +133,10 @@
                                     کپی متنی نتیجه
                                 </button>
                                 <button type="button" id="btn-capture-delay" class="btn btn-outline-success btn-lg custom-btn-outline-success w-100 fw-bold py-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
-                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send me-2" viewBox="0 0 16 16">
+                                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.337.557l-3.111-3.111a.75.75 0 0 0-.528-.528L1.414 10.7a.75.75 0 0 1 .557-1.337l14.547-5.819a.5.5 0 0 1 .544.113zM11.79 1.234 2.258 6.535l3.262.908a.25.25 0 0 1 .126.354l-.908 3.261L8.96 12.99l4.81-12.022-3.98.266z"/>
                                     </svg>
-                                    دانلود تصویر فاکتور
+                                    دریافت فاکتور تصویری
                                 </button>
                             </div>
                         </div>
@@ -337,11 +336,10 @@
                                     کپی متنی نتیجه حق‌الوکاله
                                 </button>
                                 <button type="button" id="btn-capture-lawyer" class="btn btn-outline-success btn-lg custom-btn-outline-success w-100 fw-bold py-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
-                                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-send me-2" viewBox="0 0 16 16">
+                                        <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.337.557l-3.111-3.111a.75.75 0 0 0-.528-.528L1.414 10.7a.75.75 0 0 1 .557-1.337l14.547-5.819a.5.5 0 0 1 .544.113zM11.79 1.234 2.258 6.535l3.262.908a.25.25 0 0 1 .126.354l-.908 3.261L8.96 12.99l4.81-12.022-3.98.266z"/>
                                     </svg>
-                                    دانلود تصویر فاکتور
+                                    دریافت فاکتور تصویری
                                 </button>
                             </div>
                         </div>
@@ -352,9 +350,128 @@
         </div>
     </main>
 
+    <!-- Branded Invoice Templates (rendered off-screen for html2canvas capture) -->
+    <div class="invoice-template" id="invoice-delay" aria-hidden="true">
+        <div class="invoice-header">
+            <div class="invoice-brand">
+                <div class="invoice-logo">د</div>
+                <div class="invoice-brand-text">
+                    <div class="invoice-brand-name">دشتوان | Dashtvan</div>
+                    <div class="invoice-brand-tag">سامانه هوشمند محاسبات حقوقی</div>
+                </div>
+            </div>
+            <div class="invoice-site">dashtvan.ir</div>
+        </div>
+
+        <div class="invoice-body">
+            <div class="invoice-title">فاکتور محاسبه خسارت تأخیر تأدیه</div>
+
+            <div class="invoice-meta">
+                <span>شماره فاکتور: <b id="inv-delay-number">-</b></span>
+                <span>تاریخ صدور: <b id="inv-delay-date">-</b></span>
+            </div>
+
+            <div class="invoice-row">
+                <span>اصل دین</span>
+                <b id="inv-delay-principal">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>تاریخ سررسید</span>
+                <b id="inv-delay-start">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>تاریخ یوم‌الادا</span>
+                <b id="inv-delay-end">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>خالص خسارت تأخیر تأدیه</span>
+                <b class="invoice-danger" id="inv-delay-amount">-</b>
+            </div>
+
+            <div class="invoice-total">
+                <span>مجموع قابل پرداخت (اصل + خسارت)</span>
+                <b id="inv-delay-final">-</b>
+            </div>
+        </div>
+
+        <div class="invoice-footer">
+            <div>این فاکتور توسط سامانه <b>دشتوان (Dashtvan)</b> صادر شده است</div>
+            <div class="invoice-footer-site">dashtvan.ir — مرجع آنلاین محاسبات حقوقی</div>
+        </div>
+    </div>
+
+    <div class="invoice-template" id="invoice-lawyer" aria-hidden="true">
+        <div class="invoice-header">
+            <div class="invoice-brand">
+                <div class="invoice-logo">د</div>
+                <div class="invoice-brand-text">
+                    <div class="invoice-brand-name">دشتوان | Dashtvan</div>
+                    <div class="invoice-brand-tag">سامانه هوشمند محاسبات حقوقی</div>
+                </div>
+            </div>
+            <div class="invoice-site">dashtvan.ir</div>
+        </div>
+
+        <div class="invoice-body">
+            <div class="invoice-title">فاکتور محاسبه حق‌الوکاله (تعرفه ۱۴۰۵)</div>
+
+            <div class="invoice-meta">
+                <span>شماره فاکتور: <b id="inv-lawyer-number">-</b></span>
+                <span>تاریخ صدور: <b id="inv-lawyer-date">-</b></span>
+            </div>
+
+            <div class="invoice-row">
+                <span>بهای خواسته</span>
+                <b id="inv-lawyer-principal">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>پروانه وکیل</span>
+                <b id="inv-lawyer-license">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>نرخ مؤثر تعرفه</span>
+                <b id="inv-lawyer-rate">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>حق‌الوکاله کل (ماده ۹)</span>
+                <b id="inv-lawyer-total-fee">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>مرحله بدوی (۶۰٪)</span>
+                <b id="inv-lawyer-badvi">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>مرحله تجدیدنظر (۴۰٪)</span>
+                <b id="inv-lawyer-tajdid">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>حق‌الوکاله امور اجرایی (ماده ۲۵)</span>
+                <b id="inv-lawyer-ejra">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>کل قبل از کسورات</span>
+                <b id="inv-lawyer-sum-before">-</b>
+            </div>
+            <div class="invoice-row">
+                <span>کل کسورات قانونی</span>
+                <b class="invoice-danger" id="inv-lawyer-deductions">-</b>
+            </div>
+
+            <div class="invoice-total">
+                <span>درآمد خالص نهایی وکیل</span>
+                <b id="inv-lawyer-net">-</b>
+            </div>
+        </div>
+
+        <div class="invoice-footer">
+            <div>این فاکتور توسط سامانه <b>دشتوان (Dashtvan)</b> صادر شده است</div>
+            <div class="invoice-footer-site">dashtvan.ir — مرجع آنلاین محاسبات حقوقی</div>
+        </div>
+    </div>
+
     <!-- html2canvas Library -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
+
     <!-- Bootstrap 5 Bundle JS (Includes Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>

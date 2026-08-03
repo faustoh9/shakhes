@@ -48,6 +48,12 @@ class NumberUtils {
         if (!year) return '';
         return new Intl.NumberFormat('fa-IR', { useGrouping: false }).format(year);
     }
+
+    // Converts any digits (English) to Persian digits
+    static toPersianDigits(str) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    }
 }
 
 class PersianWordUtils {
@@ -106,16 +112,22 @@ class PersianWordUtils {
 }
 
 class DateUtils {
-    static getCurrentJalaliDate() {
+    static getCurrentJalaliDateParts() {
         const date = new Date();
-        const dtf = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric' });
+        const dtf = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric', day: 'numeric' });
         const parts = dtf.formatToParts(date);
-        
-        let year, month;
+
+        let year, month, day;
         for (const p of parts) {
             if (p.type === 'year') year = parseInt(p.value, 10);
             if (p.type === 'month') month = parseInt(p.value, 10);
+            if (p.type === 'day') day = parseInt(p.value, 10);
         }
+        return { year, month, day };
+    }
+
+    static getCurrentJalaliDate() {
+        const { year, month } = this.getCurrentJalaliDateParts();
         return { year, month };
     }
 }
@@ -314,14 +326,14 @@ class UIController {
         this.form.addEventListener('submit', (e) => this.handleCalculate(e));
         this.btnClear.addEventListener('click', () => this.clearForm());
         this.btnCopy.addEventListener('click', () => this.copyResults());
-        this.btnCaptureDelay.addEventListener('click', () => this.captureElementAsImage('result-card', 'delay-invoice.png'));
+        this.btnCaptureDelay.addEventListener('click', () => this.captureElementAsImage('invoice-delay', 'dashtvan-delay-invoice.png', () => this.fillDelayInvoice()));
         this.principalInput.addEventListener('input', (e) => this.formatPrincipalInput(e));
 
         // Tab 2 Listeners
         this.lawyerForm.addEventListener('submit', (e) => this.handleCalculateLawyer(e));
         this.btnLawyerClear.addEventListener('click', () => this.clearLawyerForm());
         this.btnCopyLawyer.addEventListener('click', () => this.copyLawyerResults());
-        this.btnCaptureLawyer.addEventListener('click', () => this.captureElementAsImage('lawyer-result-card', 'lawyer-fee-invoice.png'));
+        this.btnCaptureLawyer.addEventListener('click', () => this.captureElementAsImage('invoice-lawyer', 'dashtvan-lawyer-invoice.png', () => this.fillLawyerInvoice()));
         this.lawyerPrincipalInput.addEventListener('input', (e) => this.formatLawyerPrincipalInput(e));
     }
 
@@ -613,10 +625,52 @@ class UIController {
         }
     }
 
-    async captureElementAsImage(elementId, filename) {
+    generateInvoiceNumber() {
+        const { year, month, day } = DateUtils.getCurrentJalaliDateParts();
+        const rand = Math.floor(1000 + Math.random() * 9000);
+        return NumberUtils.toPersianDigits(`${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}-${rand}`);
+    }
+
+    getFullJalaliDateString() {
+        const { year, month, day } = DateUtils.getCurrentJalaliDateParts();
+        const monthName = PERSIAN_MONTHS.find(m => m.value === month).name;
+        return `${NumberUtils.formatYear(day)} ${monthName} ${NumberUtils.formatYear(year)}`;
+    }
+
+    fillDelayInvoice() {
+        document.getElementById('inv-delay-number').textContent = this.generateInvoiceNumber();
+        document.getElementById('inv-delay-date').textContent = this.getFullJalaliDateString();
+        document.getElementById('inv-delay-principal').textContent = this.resPrincipalAmount.textContent;
+        document.getElementById('inv-delay-start').textContent = `${this.startMonthSelect.options[this.startMonthSelect.selectedIndex].text} ${NumberUtils.formatYear(this.startYearSelect.value)}`;
+        document.getElementById('inv-delay-end').textContent = `${this.endMonthSelect.options[this.endMonthSelect.selectedIndex].text} ${NumberUtils.formatYear(this.endYearSelect.value)}`;
+        document.getElementById('inv-delay-amount').textContent = this.resDelayAmount.textContent;
+        document.getElementById('inv-delay-final').textContent = this.resFinalAmount.textContent;
+    }
+
+    fillLawyerInvoice() {
+        const membershipStr = this.membershipTypeSelect.options[this.membershipTypeSelect.selectedIndex].text;
+        document.getElementById('inv-lawyer-number').textContent = this.generateInvoiceNumber();
+        document.getElementById('inv-lawyer-date').textContent = this.getFullJalaliDateString();
+        document.getElementById('inv-lawyer-principal').textContent = this.lawyerResPrincipal.textContent;
+        document.getElementById('inv-lawyer-license').textContent = membershipStr;
+        document.getElementById('inv-lawyer-rate').textContent = this.lawyerResRate.textContent;
+        document.getElementById('inv-lawyer-total-fee').textContent = this.lawyerResTotalFee.textContent;
+        document.getElementById('inv-lawyer-badvi').textContent = this.lawyerResBadvi.textContent;
+        document.getElementById('inv-lawyer-tajdid').textContent = this.lawyerResTajdid.textContent;
+        document.getElementById('inv-lawyer-ejra').textContent = this.lawyerResEjra.textContent;
+        document.getElementById('inv-lawyer-sum-before').textContent = this.lawyerResSumBefore.textContent;
+        document.getElementById('inv-lawyer-deductions').textContent = this.lawyerResTotalDeductions.textContent;
+        document.getElementById('inv-lawyer-net').textContent = this.lawyerResFinalNet.textContent;
+    }
+
+    async captureElementAsImage(elementId, filename, fillFn) {
         const element = document.getElementById(elementId);
         if (!element) return;
-        
+
+        if (typeof fillFn === 'function') {
+            fillFn();
+        }
+
         try {
             // Apply a temporary styling setup inside canvas builder
             const canvas = await html2canvas(element, {
@@ -625,7 +679,7 @@ class UIController {
                 backgroundColor: '#ffffff', // Ensures a clean flat white background card
                 logging: false
             });
-            
+
             const image = canvas.toDataURL("image/png");
             const link = document.createElement('a');
             link.download = filename;
