@@ -24,6 +24,15 @@ body {
     font-weight: 900;
 }
 
+/* Justified text for content paragraphs and lists */
+main p,
+main li,
+main ol,
+main .accordion-body {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
 /* Tab Navigation Customizations */
 .nav-pills .nav-link {
     color: rgba(255, 255, 255, 0.75);
