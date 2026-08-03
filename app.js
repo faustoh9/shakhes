@@ -326,14 +326,14 @@ class UIController {
         this.form.addEventListener('submit', (e) => this.handleCalculate(e));
         this.btnClear.addEventListener('click', () => this.clearForm());
         this.btnCopy.addEventListener('click', () => this.copyResults());
-        this.btnCaptureDelay.addEventListener('click', () => this.captureElementAsImage('invoice-delay', 'dashtvan-delay-invoice.png', () => this.fillDelayInvoice()));
+        this.btnCaptureDelay.addEventListener('click', () => this.captureElementAsImage('invoice-delay', 'dashtvan-delay-result.png', () => this.fillDelayInvoice()));
         this.principalInput.addEventListener('input', (e) => this.formatPrincipalInput(e));
 
         // Tab 2 Listeners
         this.lawyerForm.addEventListener('submit', (e) => this.handleCalculateLawyer(e));
         this.btnLawyerClear.addEventListener('click', () => this.clearLawyerForm());
         this.btnCopyLawyer.addEventListener('click', () => this.copyLawyerResults());
-        this.btnCaptureLawyer.addEventListener('click', () => this.captureElementAsImage('invoice-lawyer', 'dashtvan-lawyer-invoice.png', () => this.fillLawyerInvoice()));
+        this.btnCaptureLawyer.addEventListener('click', () => this.captureElementAsImage('invoice-lawyer', 'dashtvan-lawyer-result.png', () => this.fillLawyerInvoice()));
         this.lawyerPrincipalInput.addEventListener('input', (e) => this.formatLawyerPrincipalInput(e));
     }
 
@@ -687,7 +687,7 @@ class UIController {
             link.click();
         } catch (error) {
             console.error("Capture implementation failed:", error);
-            alert("خطا در ایجاد تصویر فاکتور. لطفاً مجدداً تلاش نمایید.");
+            alert("خطا در ایجاد تصویر محاسبه. لطفاً مجدداً تلاش نمایید.");
         }
     }
 }
